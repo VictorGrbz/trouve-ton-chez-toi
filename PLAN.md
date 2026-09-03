@@ -4,6 +4,15 @@
 
 ---
 
+## État d'avancement (03/09/2026)
+
+- ✅ **Étape 0 — Dépôt Git** : `VictorGrbz/trouve-ton-chez-toi` créé et poussé.
+- ✅ **Étape 1 — Initialisation du projet** : scaffold Next.js (App Router, TS, Tailwind) + PWA Serwist + connexion PostgreSQL (`db/index.ts`) faits, build et dev vérifiés. Écart au plan initial : Next.js 16 active Turbopack par défaut, incompatible avec `@serwist/next` stable → scripts `dev`/`build` basculés sur `--webpack` dans `package.json`. Hook `tsc --noEmit` configuré dans `.claude/settings.json` (peut nécessiter d'ouvrir `/hooks` une fois pour s'activer si jamais il ne se déclenche pas).
+- ✅ **Étape 2 — Direction artistique** : `PRODUCT.md` créé (via `/impeccable init`, à partir du brief existant + cadrage). Brief de direction confirmé via `/impeccable shape` (écran de référence : fiche bien). Mock validé par Claude Design déposé dans `.impeccable/mocks/external/Design Trouve Ton Chez Toi.png` — **référence visuelle approuvée du projet** : fond crème, bleu marine, accents ambre/or, layout en cartes. Logo existant dans `ressources/Documents avant projet/App immobilier/` confirmé **non contraignant** (placeholder à ignorer).
+- ⏭️ **Prochaine étape : Étape 3 — Profil d'achat et budget**. Pas de mock dédié pour cet écran : doit hériter du système visuel établi par le mock de la fiche bien (Étape 2), pas relancer un choix de direction.
+
+---
+
 ## Contexte
 
 Premier projet business de Victor (pas un projet vitrine portfolio comme les précédents) : "Trouve Ton Chez-Toi", un copilote d'achat immobilier français — carnet de visite intelligent qui accompagne l'utilisateur avant, pendant et après chaque visite de bien. Cadré à partir d'un brief produit et d'un tableau de fonctionnalités déjà rédigés par Victor (`ressources/Documents avant projet/App immobilier/`), complétés par une interview de cadrage (agent `chef-de-projet`).
