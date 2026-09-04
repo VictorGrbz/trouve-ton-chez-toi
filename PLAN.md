@@ -4,12 +4,19 @@
 
 ---
 
-## État d'avancement (03/09/2026)
+## État d'avancement (04/09/2026)
 
 - ✅ **Étape 0 — Dépôt Git** : `VictorGrbz/trouve-ton-chez-toi` créé et poussé.
 - ✅ **Étape 1 — Initialisation du projet** : scaffold Next.js (App Router, TS, Tailwind) + PWA Serwist + connexion PostgreSQL (`db/index.ts`) faits, build et dev vérifiés. Écart au plan initial : Next.js 16 active Turbopack par défaut, incompatible avec `@serwist/next` stable → scripts `dev`/`build` basculés sur `--webpack` dans `package.json`. Hook `tsc --noEmit` configuré dans `.claude/settings.json` (peut nécessiter d'ouvrir `/hooks` une fois pour s'activer si jamais il ne se déclenche pas).
-- ✅ **Étape 2 — Direction artistique** : `PRODUCT.md` créé (via `/impeccable init`, à partir du brief existant + cadrage). Brief de direction confirmé via `/impeccable shape` (écran de référence : fiche bien). Mock validé par Claude Design déposé dans `.impeccable/mocks/external/Design Trouve Ton Chez Toi.png` — **référence visuelle approuvée du projet** : fond crème, bleu marine, accents ambre/or, layout en cartes. Logo existant dans `ressources/Documents avant projet/App immobilier/` confirmé **non contraignant** (placeholder à ignorer).
-- ⏭️ **Prochaine étape : Étape 3 — Profil d'achat et budget**. Pas de mock dédié pour cet écran : doit hériter du système visuel établi par le mock de la fiche bien (Étape 2), pas relancer un choix de direction.
+- ✅ **Étape 2 — Direction artistique** : `PRODUCT.md` créé (via `/impeccable init`, à partir du brief existant + cadrage). Brief de direction confirmé via `/impeccable shape` (écran de référence : fiche bien). Mock validé par Claude Design déposé dans `.impeccable/mocks/external/Design Trouve Ton Chez Toi.png` — **référence visuelle approuvée du projet** : fond crème, bleu marine, accents ambre/or, layout en cartes. Logo existant dans `ressources/Documents avant projet/App immobilier/` confirmé **non contraignant** (placeholder à ignorer). Système visuel porté dans le code le 04/09/2026 (voir note ci-dessous) — palette échantillonnée directement sur les pixels du mock dans `app/globals.css` (`@theme inline`), primitives `components/ui/` (Card, Badge, Button, Input, Select), icônes PWA générées via `next/og` (`app/icon.tsx`, `app/apple-icon.tsx`) et `app/manifest.ts` aligné.
+- ✅ **Étape 3 — Profil d'achat et budget (3 personas)** : formulaire progressif à `/projet/nouveau` (`app/projet/nouveau/`), calcul déterministe d'enveloppe budgétaire (`lib/budget.ts`, formule d'annuité + hypothèses conservatrices, taux d'effort 30 % sous le plafond légal de 35 % que l'Étape 4 formalisera), table `projet_achat` (`db/schema.sql`, appliquée via `npm run db:init`). Testé de bout en bout sur la vraie base Coolify pour les 3 personas (solo, couple, investisseur) — enveloppes cohérentes, rendement locatif visé capté mais non injecté dans le calcul, cas limite revenu=0 géré. Données de test nettoyées après vérification.
+- ⏭️ **Prochaine étape : Étape 4 — Moteur de simulation financière (sans IA)**. `lib/notaire.ts`, `config/bareme-notarial.json`, `lib/credit.ts` — barème notarial à vérifier manuellement sur Service-Public.fr avant mise en production.
+
+**Note d'infrastructure (04/09/2026)** : la base Postgres self-hosted Coolify (conteneur `f8y0i4rujbfdgy0iq7u7twbm` sur le ProDesk, base `ttct`) n'est joignable depuis la machine de dev que via un tunnel SSH — le port 5432 local est déjà occupé par un Postgres natif Windows, donc le tunnel utilise le **port 5433** :
+```
+ssh -L 5433:10.0.1.7:5432 -N prodesk
+```
+`DATABASE_URL` dans `.env.local` pointe sur `127.0.0.1:5433`. **Ce tunnel doit être relancé manuellement à chaque reprise de session de dev** (il ne survit pas au redémarrage de la machine ni à la fermeture du terminal qui le porte) avant d'utiliser `npm run db:init` ou de tester un parcours qui touche la base. Si l'IP interne du conteneur (`10.0.1.7`) a changé, revérifier avec `ssh prodesk "docker inspect -f '{{.NetworkSettings.Networks.coolify.IPAddress}}' f8y0i4rujbfdgy0iq7u7twbm"`.
 
 ---
 
@@ -256,7 +263,7 @@ Premier projet business de Victor (pas un projet vitrine portfolio comme les pr�
 
 ## Vérification automatique
 
-- [ ] Configurer un hook `PostToolUse` dans `.claude/settings.json` du dossier `trouve-ton-chez-toi`, déclenché après `Edit`/`Write` sur les fichiers `*.ts`/`*.tsx`, qui lance `npx tsc --noEmit` (contrôle de types) — à mettre en place par l'Artisan avant de commencer l'étape 1, pour détecter les erreurs de type au fil de l'eau plutôt qu'en fin de build.
+- [x] Configurer un hook `PostToolUse` dans `.claude/settings.json` du dossier `trouve-ton-chez-toi`, déclenché après `Edit`/`Write` sur les fichiers `*.ts`/`*.tsx`, qui lance `npx tsc --noEmit` (contrôle de types) — à mettre en place par l'Artisan avant de commencer l'étape 1, pour détecter les erreurs de type au fil de l'eau plutôt qu'en fin de build.
 
 ---
 
