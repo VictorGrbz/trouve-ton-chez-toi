@@ -6,7 +6,8 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:init": "node --env-file=.env.local db/init.mjs"
   },
   "dependencies": {
     "@serwist/next": "^9.5.12",
@@ -14,7 +15,8 @@
     "pg": "^8.23.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "serwist": "^9.5.12"
+    "serwist": "^9.5.12",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
