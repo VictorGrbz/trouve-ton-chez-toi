@@ -73,11 +73,16 @@ export default async function FicheBienPage({
       </p>
       <h1 className="text-2xl font-semibold tracking-tight">{bien.titre}</h1>
 
-      <Link href={`/biens/${bien.id}/checklist`} className="mt-4">
-        <Button variant="outline" className="w-full sm:w-auto">
-          Voir la check-list de visite
-        </Button>
-      </Link>
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+        <Link href={`/biens/${bien.id}/checklist`}>
+          <Button variant="outline" className="w-full sm:w-auto">
+            Voir la check-list de visite
+          </Button>
+        </Link>
+        <Link href={`/biens/${bien.id}/visite`}>
+          <Button className="w-full sm:w-auto">Démarrer la visite</Button>
+        </Link>
+      </div>
 
       <Card className="mt-6">
         <dl className="space-y-2 text-sm">

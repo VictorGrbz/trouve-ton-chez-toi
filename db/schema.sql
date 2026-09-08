@@ -89,3 +89,28 @@ CREATE TABLE IF NOT EXISTS bien_photo (
 );
 
 CREATE INDEX IF NOT EXISTS idx_bien_photo_bien ON bien_photo(bien_id);
+
+-- Étape 8 — Observations de visite (coché/incertain/note par item de check-list)
+-- client_id : UUID généré côté navigateur, sert de clé d'idempotence pour la
+-- synchronisation différée (une resoumission réseau ne crée jamais de doublon).
+CREATE TABLE IF NOT EXISTS visite_observation (
+  id                  bigserial PRIMARY KEY,
+  bien_id             bigint NOT NULL REFERENCES bien(id) ON DELETE CASCADE,
+  client_id           text NOT NULL UNIQUE,
+  checklist_item_id   text NOT NULL,
+  coche               boolean NOT NULL DEFAULT false,
+  incertain           boolean NOT NULL DEFAULT false,
+  note                text,
+  created_at          timestamptz NOT NULL DEFAULT now(),
+  updated_at          timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_visite_observation_bien ON visite_observation(bien_id);
+
+-- Les photos prises pendant une visite réutilisent bien_photo (Étape 6) :
+-- une photo de visite est une photo de bien comme une autre, simplement
+-- rattachée à un item de check-list et dotée d'un client_id pour l'idempotence
+-- (nullable : les photos créées via /biens/nouveau n'en ont pas).
+ALTER TABLE bien_photo
+  ADD COLUMN IF NOT EXISTS checklist_item_id text,
+  ADD COLUMN IF NOT EXISTS client_id text UNIQUE;
