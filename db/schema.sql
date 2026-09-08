@@ -30,3 +30,10 @@ CREATE TABLE IF NOT EXISTS projet_achat (
 );
 
 CREATE INDEX IF NOT EXISTS idx_projet_achat_persona ON projet_achat(persona);
+
+-- Étape 4 — Traçabilité des résultats du moteur de simulation (lib/notaire.ts + lib/credit.ts)
+ALTER TABLE projet_achat
+  ADD COLUMN IF NOT EXISTS mensualite_indicative         numeric(10,2),
+  ADD COLUMN IF NOT EXISTS capacite_emprunt_indicative   numeric(12,2),
+  ADD COLUMN IF NOT EXISTS cout_total_interets_indicatif numeric(12,2),
+  ADD COLUMN IF NOT EXISTS taux_effort_effectif_pct      numeric(5,2);

@@ -32,7 +32,15 @@ const creerProjetSchema = z
 export type CreerProjetInput = z.input<typeof creerProjetSchema>;
 
 export type CreerProjetResult =
-  | { ok: true; enveloppeBudgetMax: number; fraisAcquisitionEstimes: number; margeSecuriteMontant: number }
+  | {
+      ok: true;
+      enveloppeBudgetMax: number;
+      fraisAcquisitionEstimes: number;
+      margeSecuriteMontant: number;
+      mensualiteIndicative: number;
+      coutTotalInteretsIndicatif: number;
+      tauxEffortEffectifPct: number;
+    }
   | { ok: false; error: string };
 
 export async function creerProjetAchat(
@@ -60,8 +68,10 @@ export async function creerProjetAchat(
       revenu_mensuel_2, situation_pro_2,
       apport, budget_cible, rendement_locatif_vise_pct,
       enveloppe_budget_max, frais_acquisition_estimes, marge_securite_montant,
-      hypotheses_calcul
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
+      hypotheses_calcul,
+      mensualite_indicative, capacite_emprunt_indicative,
+      cout_total_interets_indicatif, taux_effort_effectif_pct
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)`,
     [
       data.persona,
       data.nomProjet ?? null,
@@ -77,6 +87,10 @@ export async function creerProjetAchat(
       resultat.fraisAcquisitionEstimes,
       resultat.margeSecuriteMontant,
       JSON.stringify(resultat.hypotheses),
+      resultat.mensualiteIndicative,
+      resultat.capaciteEmpruntIndicative,
+      resultat.coutTotalInteretsIndicatif,
+      resultat.tauxEffortEffectifPct,
     ],
   );
 
@@ -85,5 +99,8 @@ export async function creerProjetAchat(
     enveloppeBudgetMax: resultat.enveloppeBudgetMax,
     fraisAcquisitionEstimes: resultat.fraisAcquisitionEstimes,
     margeSecuriteMontant: resultat.margeSecuriteMontant,
+    mensualiteIndicative: resultat.mensualiteIndicative,
+    coutTotalInteretsIndicatif: resultat.coutTotalInteretsIndicatif,
+    tauxEffortEffectifPct: resultat.tauxEffortEffectifPct,
   };
 }

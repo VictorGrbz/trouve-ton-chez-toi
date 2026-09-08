@@ -1,0 +1,41 @@
+{
+  "_meta": {
+    "description": "Barème notarial (frais d'acquisition, immobilier ANCIEN uniquement). Mise à jour MANUELLE UNIQUEMENT — jamais de scraping/automatisation (le barème change par arrêté ministériel tous les 1 à 2 ans environ). Voir lib/notaire.ts pour l'avertissement complet.",
+    "source_reference": "https://www.service-public.gouv.fr/particuliers/vosdroits/R54267"
+  },
+  "emoluments_notaire": {
+    "tva_pct": 20,
+    "baremes": [
+      {
+        "date_debut": "2021-01-01",
+        "date_fin": null,
+        "verifie_le": "2026-09-08",
+        "source": "https://www.service-public.gouv.fr/particuliers/vosdroits/R54267",
+        "tranches": [
+          { "seuil_min": 0, "seuil_max": 6500, "taux_pct": 3.870 },
+          { "seuil_min": 6500, "seuil_max": 17000, "taux_pct": 1.596 },
+          { "seuil_min": 17000, "seuil_max": 60000, "taux_pct": 1.064 },
+          { "seuil_min": 60000, "seuil_max": null, "taux_pct": 0.799 }
+        ]
+      }
+    ]
+  },
+  "dmto": {
+    "taxe_communale_pct": 1.20,
+    "frais_assiette_pct_du_taux_departemental": 2.37,
+    "baremes": [
+      {
+        "date_debut": "2025-04-01",
+        "date_fin": null,
+        "verifie_le": "2026-09-08",
+        "source": "https://www.service-public.gouv.fr/particuliers/vosdroits/R54267",
+        "taux_departemental_defaut_pct": 4.50,
+        "taux_departemental_par_departement": {
+          "75": 4.50
+        }
+      }
+    ]
+  },
+  "csi_pct": 0.10,
+  "debours_forfait_eur": 1000
+}

@@ -125,6 +125,24 @@ export function ProjetWizard() {
               {formatMontant(result.margeSecuriteMontant)}
             </dd>
           </div>
+          <div className="flex justify-between">
+            <dt className="text-muted-foreground">Mensualité indicative</dt>
+            <dd className="font-mono tabular-nums">
+              {formatMontant(result.mensualiteIndicative)}
+            </dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-muted-foreground">Coût total des intérêts</dt>
+            <dd className="font-mono tabular-nums">
+              {formatMontant(result.coutTotalInteretsIndicatif)}
+            </dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-muted-foreground">Taux d&apos;effort effectif</dt>
+            <dd className="font-mono tabular-nums">
+              {result.tauxEffortEffectifPct} %
+            </dd>
+          </div>
         </dl>
         <p className="mt-6 text-xs text-muted-foreground">
           Estimation indicative de première approche, pas un accord de prêt ni
