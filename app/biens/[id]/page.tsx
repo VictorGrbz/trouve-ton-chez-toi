@@ -82,6 +82,11 @@ export default async function FicheBienPage({
         <Link href={`/biens/${bien.id}/visite`}>
           <Button className="w-full sm:w-auto">Démarrer la visite</Button>
         </Link>
+        <Link href={`/biens/${bien.id}/observations`}>
+          <Button variant="outline" className="w-full sm:w-auto">
+            Observations partagées
+          </Button>
+        </Link>
       </div>
 
       <Card className="mt-6">

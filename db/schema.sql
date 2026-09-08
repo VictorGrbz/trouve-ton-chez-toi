@@ -114,3 +114,17 @@ CREATE INDEX IF NOT EXISTS idx_visite_observation_bien ON visite_observation(bie
 ALTER TABLE bien_photo
   ADD COLUMN IF NOT EXISTS checklist_item_id text,
   ADD COLUMN IF NOT EXISTS client_id text UNIQUE;
+
+-- Étape 9 — Mode projet partagé simple (persona couple/famille) : chaque
+-- observation est liée à un auteur nommé en texte libre (ex. "Victor",
+-- "Jess"), pas à un compte séparé — un seul dossier partagé, pas de votes
+-- individuels (hors MVP, voir PLAN.md).
+CREATE TABLE IF NOT EXISTS observation (
+  id          bigserial PRIMARY KEY,
+  bien_id     bigint NOT NULL REFERENCES bien(id) ON DELETE CASCADE,
+  auteur_nom  text NOT NULL,
+  texte       text NOT NULL,
+  created_at  timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_observation_bien ON observation(bien_id);
