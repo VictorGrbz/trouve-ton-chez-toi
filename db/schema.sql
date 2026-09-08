@@ -37,3 +37,18 @@ ALTER TABLE projet_achat
   ADD COLUMN IF NOT EXISTS capacite_emprunt_indicative   numeric(12,2),
   ADD COLUMN IF NOT EXISTS cout_total_interets_indicatif numeric(12,2),
   ADD COLUMN IF NOT EXISTS taux_effort_effectif_pct      numeric(5,2);
+
+-- Étape 5 — Taux de référence Banque de France (nouveaux crédits à l'habitat)
+-- Synchronisé par db/sync-taux-reference.mjs (cron mensuel côté Coolify).
+CREATE TABLE IF NOT EXISTS taux_reference (
+  id              bigserial PRIMARY KEY,
+  mois_reference  text NOT NULL UNIQUE CHECK (mois_reference ~ '^\d{4}-\d{2}$'),
+  valeur_pct      numeric(5,2) NOT NULL CHECK (valeur_pct >= 0),
+  source_url      text NOT NULL,
+  synced_at       timestamptz NOT NULL DEFAULT now()
+);
+
+-- Champ informatif saisi par l'utilisateur, jamais utilisé comme valeur par
+-- défaut ou dans le calcul (voir lib/budget.ts) — repère personnel uniquement.
+ALTER TABLE projet_achat
+  ADD COLUMN IF NOT EXISTS taux_banque_propose_pct numeric(5,2);

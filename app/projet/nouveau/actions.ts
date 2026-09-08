@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { db } from "@/db";
 import { calculerEnveloppeBudget, type Persona } from "@/lib/budget";
+import { obtenirTauxReferenceActuel, formaterMoisReference } from "@/lib/taux-reference";
 
 const creerProjetSchema = z
   .object({
@@ -16,6 +17,7 @@ const creerProjetSchema = z
     apport: z.number().nonnegative(),
     budgetCible: z.number().nonnegative().optional(),
     rendementLocatifVisePct: z.number().nonnegative().max(100).optional(),
+    tauxBanqueProposePct: z.number().nonnegative().max(100).optional(),
   })
   .refine((data) => data.persona === "couple" || data.revenuMensuel2 === undefined, {
     message: "Le second revenu n'est utilisé que pour le persona couple.",
@@ -40,6 +42,8 @@ export type CreerProjetResult =
       mensualiteIndicative: number;
       coutTotalInteretsIndicatif: number;
       tauxEffortEffectifPct: number;
+      tauxInteretRetenuPct: number;
+      tauxInteretRetenuLabel: string;
     }
   | { ok: false; error: string };
 
@@ -52,6 +56,8 @@ export async function creerProjetAchat(
   }
   const data = parsed.data;
 
+  const tauxReference = await obtenirTauxReferenceActuel();
+
   const resultat = calculerEnveloppeBudget({
     persona: data.persona,
     revenuMensuel1: data.revenuMensuel1,
@@ -59,7 +65,12 @@ export async function creerProjetAchat(
     apport: data.apport,
     rendementLocatifVisePct:
       data.persona === "investisseur" ? data.rendementLocatifVisePct ?? null : null,
+    tauxInteretAnnuelReferencePct: tauxReference?.valeurPct ?? null,
   });
+
+  const tauxInteretRetenuLabel = tauxReference
+    ? `Banque de France, statistiques des nouveaux crédits à l'habitat, ${formaterMoisReference(tauxReference.moisReference)}`
+    : "hypothèse indicative, taux de référence Banque de France non disponible";
 
   await db.query(
     `INSERT INTO projet_achat (
@@ -70,8 +81,9 @@ export async function creerProjetAchat(
       enveloppe_budget_max, frais_acquisition_estimes, marge_securite_montant,
       hypotheses_calcul,
       mensualite_indicative, capacite_emprunt_indicative,
-      cout_total_interets_indicatif, taux_effort_effectif_pct
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)`,
+      cout_total_interets_indicatif, taux_effort_effectif_pct,
+      taux_banque_propose_pct
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)`,
     [
       data.persona,
       data.nomProjet ?? null,
@@ -91,6 +103,7 @@ export async function creerProjetAchat(
       resultat.capaciteEmpruntIndicative,
       resultat.coutTotalInteretsIndicatif,
       resultat.tauxEffortEffectifPct,
+      data.tauxBanqueProposePct ?? null,
     ],
   );
 
@@ -102,5 +115,7 @@ export async function creerProjetAchat(
     mensualiteIndicative: resultat.mensualiteIndicative,
     coutTotalInteretsIndicatif: resultat.coutTotalInteretsIndicatif,
     tauxEffortEffectifPct: resultat.tauxEffortEffectifPct,
+    tauxInteretRetenuPct: resultat.hypotheses.tauxInteretAnnuelIndicatifPct,
+    tauxInteretRetenuLabel,
   };
 }

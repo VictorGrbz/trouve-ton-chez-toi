@@ -9,6 +9,12 @@ export interface CalculBudgetInput {
   revenuMensuel2?: number | null;
   apport: number;
   rendementLocatifVisePct?: number | null;
+  /**
+   * Taux de référence Banque de France (nouveaux crédits à l'habitat), s'il
+   * a déjà été synchronisé (voir lib/taux-reference.ts). Si absent/null,
+   * `lib/credit.ts` retombe sur son taux indicatif par défaut.
+   */
+  tauxInteretAnnuelReferencePct?: number | null;
 }
 
 export interface CalculBudgetResult {
@@ -26,6 +32,10 @@ export interface CalculBudgetResult {
     tauxAssuranceAnnuelIndicatifPct: number;
     tauxMargeSecuritePct: number;
     fraisNotaire: ReturnType<typeof calculerFraisNotaire>["hypotheses"];
+    tauxReference: {
+      utilise: boolean;
+      valeurPct: number | null;
+    };
   };
 }
 
@@ -80,10 +90,17 @@ export function calculerEnveloppeBudget(
 ): CalculBudgetResult {
   const revenuTotal = input.revenuMensuel1 + (input.revenuMensuel2 ?? 0);
 
+  const tauxReferenceUtilise =
+    input.tauxInteretAnnuelReferencePct != null &&
+    input.tauxInteretAnnuelReferencePct >= 0;
+
   const credit = calculerCapaciteEmprunt({
     revenuMensuelTotal: revenuTotal,
     dureeAns: DUREE_ANS,
     tauxEffortMaxPct: TAUX_EFFORT_INDICATIF_PCT,
+    tauxInteretAnnuelPct: tauxReferenceUtilise
+      ? input.tauxInteretAnnuelReferencePct!
+      : undefined,
   });
 
   const disponibleTotal = credit.capaciteEmpruntMax + input.apport;
@@ -109,6 +126,12 @@ export function calculerEnveloppeBudget(
       tauxAssuranceAnnuelIndicatifPct: credit.hypotheses.tauxAssuranceAnnuelPct,
       tauxMargeSecuritePct: TAUX_MARGE_SECURITE_PCT,
       fraisNotaire: fraisNotaire.hypotheses,
+      tauxReference: {
+        utilise: tauxReferenceUtilise,
+        valeurPct: tauxReferenceUtilise
+          ? input.tauxInteretAnnuelReferencePct!
+          : null,
+      },
     },
   };
 }

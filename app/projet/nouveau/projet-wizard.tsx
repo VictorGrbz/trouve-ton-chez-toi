@@ -35,6 +35,7 @@ interface FormState {
   revenuMensuel2: string;
   situationPro2: string;
   rendementLocatifVisePct: string;
+  tauxBanqueProposePct: string;
 }
 
 const initialState: FormState = {
@@ -48,6 +49,7 @@ const initialState: FormState = {
   revenuMensuel2: "",
   situationPro2: "",
   rendementLocatifVisePct: "",
+  tauxBanqueProposePct: "",
 };
 
 const formatMontant = (valeur: number) =>
@@ -91,6 +93,7 @@ export function ProjetWizard() {
         form.persona === "investisseur"
           ? toNumber(form.rendementLocatifVisePct)
           : undefined,
+      tauxBanqueProposePct: toNumber(form.tauxBanqueProposePct),
     });
 
     setSubmitting(false);
@@ -143,8 +146,17 @@ export function ProjetWizard() {
               {result.tauxEffortEffectifPct} %
             </dd>
           </div>
+          <div className="flex justify-between">
+            <dt className="text-muted-foreground">Taux d&apos;intérêt retenu</dt>
+            <dd className="font-mono tabular-nums">
+              {result.tauxInteretRetenuPct} %
+            </dd>
+          </div>
         </dl>
-        <p className="mt-6 text-xs text-muted-foreground">
+        <p className="mt-4 text-xs text-muted-foreground">
+          Source du taux retenu : {result.tauxInteretRetenuLabel}.
+        </p>
+        <p className="mt-2 text-xs text-muted-foreground">
           Estimation indicative de première approche, pas un accord de prêt ni
           un conseil financier engageant.
           {form.persona === "investisseur" &&
@@ -301,6 +313,22 @@ export function ProjetWizard() {
               </span>
             </label>
           )}
+
+          <label className="flex flex-col gap-1 text-sm">
+            Taux proposé par votre banque (%, optionnel)
+            <Input
+              type="number"
+              min="0"
+              max="100"
+              step="0.01"
+              value={form.tauxBanqueProposePct}
+              onChange={(e) => update("tauxBanqueProposePct", e.target.value)}
+            />
+            <span className="text-xs text-muted-foreground">
+              Repère personnel uniquement : jamais utilisé comme hypothèse par
+              défaut dans le calcul.
+            </span>
+          </label>
 
           <div className="flex justify-between">
             <Button variant="outline" onClick={() => setStep(2)}>
