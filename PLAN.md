@@ -4,7 +4,7 @@
 
 ---
 
-## État d'avancement (04/09/2026)
+## État d'avancement (08/09/2026)
 
 - ✅ **Étape 0 — Dépôt Git** : `VictorGrbz/trouve-ton-chez-toi` créé et poussé.
 - ✅ **Étape 1 — Initialisation du projet** : scaffold Next.js (App Router, TS, Tailwind) + PWA Serwist + connexion PostgreSQL (`db/index.ts`) faits, build et dev vérifiés. Écart au plan initial : Next.js 16 active Turbopack par défaut, incompatible avec `@serwist/next` stable → scripts `dev`/`build` basculés sur `--webpack` dans `package.json`. Hook `tsc --noEmit` configuré dans `.claude/settings.json` (peut nécessiter d'ouvrir `/hooks` une fois pour s'activer si jamais il ne se déclenche pas).
