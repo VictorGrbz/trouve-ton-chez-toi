@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/db";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 const formatMontant = (valeur: number) =>
   new Intl.NumberFormat("fr-FR", {
@@ -70,6 +72,12 @@ export default async function FicheBienPage({
         {bien.nom_projet?.trim() || bien.zone_recherche}
       </p>
       <h1 className="text-2xl font-semibold tracking-tight">{bien.titre}</h1>
+
+      <Link href={`/biens/${bien.id}/checklist`} className="mt-4">
+        <Button variant="outline" className="w-full sm:w-auto">
+          Voir la check-list de visite
+        </Button>
+      </Link>
 
       <Card className="mt-6">
         <dl className="space-y-2 text-sm">
